@@ -60,8 +60,8 @@ export default defineConfig(async (): Promise<Options[]> => {
       shims: true,
       sourcemap: process.env.NODE_ENV === 'production' ? false : 'inline', // 環境に応じたソースマップ設定
       splitting: true, // 分割を有効化
-      target: ['es2020'], // ターゲットブラウザの更新
-      treeshake: true, // トリーシェイキングを有効化
+      target: ['chrome123'], // ターゲットブラウザの更新
+      treeshake: false, // トリーシェイキングを有効化
     },
   ];
 });
