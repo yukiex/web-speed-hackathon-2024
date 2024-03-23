@@ -58,10 +58,10 @@ export default defineConfig(async (): Promise<Options[]> => {
       outDir: OUTPUT_DIR,
       platform: 'browser',
       shims: true,
-      sourcemap: process.env.NODE_ENV === 'production' ? false : 'inline', // 環境に応じたソースマップ設定
+      sourcemap: process.env['NODE_ENV'] === 'production' ? false : 'inline', // 環境に応じたソースマップ設定
       splitting: true, // 分割を有効化
       target: ['chrome123'], // ターゲットブラウザの更新
-      treeshake: false, // トリーシェイキングを有効化
+      treeshake: false, // ツリーシェイキングを無効化(なぜか動かないので)
     },
   ];
 });
