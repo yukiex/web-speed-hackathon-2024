@@ -54,14 +54,14 @@ export default defineConfig(async (): Promise<Options[]> => {
         '.wasm': 'binary',
       },
       metafile: true,
-      minify: false,
+      minify: true, // ミニファイを有効化
       outDir: OUTPUT_DIR,
       platform: 'browser',
       shims: true,
-      sourcemap: 'inline',
-      splitting: false,
-      target: ['chrome58', 'firefox57', 'safari11', 'edge18'],
-      treeshake: false,
+      sourcemap: process.env.NODE_ENV === 'production' ? false : 'inline', // 環境に応じたソースマップ設定
+      splitting: true, // 分割を有効化
+      target: ['es2020'], // ターゲットブラウザの更新
+      treeshake: true, // トリーシェイキングを有効化
     },
   ];
 });
