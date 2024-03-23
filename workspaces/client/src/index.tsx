@@ -1,6 +1,6 @@
 // import './side-effects';
 
-import ReactDOM from 'react-dom/client';
+import * as ReactDOMClient from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 
@@ -14,23 +14,22 @@ const main = async () => {
   await registerServiceWorker();
   // await preloadImages();
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const rootElement = document.getElementById('root');
-    if (rootElement) {
-      if (window.location.pathname.startsWith('/admin')) {
-        ReactDOM.createRoot(rootElement).render(<AdminApp />);
-      } else {
-        ReactDOM.hydrateRoot(
-          rootElement,
-          <SWRConfig value={{ revalidateIfStale: true, revalidateOnFocus: false, revalidateOnReconnect: false }}>
-            <BrowserRouter>
-              <ClientApp />
-            </BrowserRouter>
-          </SWRConfig>,
-        );
-      }
+  const rootElement = document.getElementById('root');
+  if (rootElement) {
+    if (window.location.pathname.startsWith('/admin')) {
+      const root = ReactDOMClient.createRoot(rootElement);
+      root.render(<AdminApp />);
+    } else {
+      const root = ReactDOMClient.createRoot(rootElement);
+      root.render(
+        <SWRConfig value={{ revalidateIfStale: true, revalidateOnFocus: false, revalidateOnReconnect: false }}>
+          <BrowserRouter>
+            <ClientApp />
+          </BrowserRouter>
+        </SWRConfig>,
+      );
     }
-  });
+  }
 };
 
 main().catch(console.error);
