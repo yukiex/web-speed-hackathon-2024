@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import jsesc from 'jsesc';
-import moment from 'moment-timezone';
+// momentのインポートを削除します。
 import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import { ServerStyleSheet } from 'styled-components';
@@ -22,8 +22,9 @@ const app = new Hono();
 async function createInjectDataStr(): Promise<Record<string, unknown>> {
   const json: Record<string, unknown> = {};
 
+  // moment() を new Date() に置き換えます。
   {
-    const dayOfWeek = getDayOfWeekStr(moment());
+    const dayOfWeek = getDayOfWeekStr(new Date());
     const releases = await releaseApiClient.fetch({ params: { dayOfWeek } });
     json[unstable_serialize(releaseApiClient.fetch$$key({ params: { dayOfWeek } }))] = releases;
   }
