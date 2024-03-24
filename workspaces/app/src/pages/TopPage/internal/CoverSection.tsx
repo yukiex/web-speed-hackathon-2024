@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import styled from 'styled-components';
 
 import { SvgIcon } from '../../../features/icons/components/SvgIcon';
@@ -5,7 +6,8 @@ import { Link } from '../../../foundation/components/Link';
 import { Text } from '../../../foundation/components/Text';
 import { Color, Radius, Space, Typography } from '../../../foundation/styles/variables';
 
-import { HeroImage } from './HeroImage';
+// HeroImageを遅延ローディングするためにReact.lazyを使用
+const HeroImage = React.lazy(() => import('./HeroImage'));
 
 const _Wrapper = styled.div`
   width: calc(100% + ${Space * 4}px);
@@ -29,10 +31,12 @@ const _SearchLink = styled(Link)`
   transform: translateY(50%);
 `;
 
-export const CoverSection: React.FC = () => {
+const CoverSection: React.FC = () => {
   return (
     <_Wrapper>
-      <HeroImage />
+      <Suspense fallback={<div>Loading...</div>}>
+        <HeroImage />
+      </Suspense>
       <_SearchLink href="/search">
         <SvgIcon color={Color.MONO_A} height={24} type="Search" width={24} />
         <Text color={Color.MONO_A} typography={Typography.NORMAL16}>
@@ -42,3 +46,5 @@ export const CoverSection: React.FC = () => {
     </_Wrapper>
   );
 };
+
+export default CoverSection;

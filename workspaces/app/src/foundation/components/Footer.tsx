@@ -1,13 +1,9 @@
-import { useSetAtom } from 'jotai';
-import React, { useId } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useSetAtom } from 'jotai';
+import { useId } from 'react';
 
 import { DialogContentAtom } from '../atoms/DialogContentAtom';
-import { COMPANY } from '../constants/Company';
-import { CONTACT } from '../constants/Contact';
-import { OVERVIEW } from '../constants/Overview';
-import { QUESTION } from '../constants/Question';
-import { TERM } from '../constants/Term';
 import { Color, Space, Typography } from '../styles/variables';
 
 import { Box } from './Box';
@@ -25,110 +21,85 @@ const _Content = styled.section`
 `;
 
 export const Footer: React.FC = () => {
-  const [isClient, setIsClient] = React.useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const termDialogA11yId = useId();
-  const contactDialogA11yId = useId();
-  const questionDialogA11yId = useId();
-  const companyDialogA11yId = useId();
-  const overviewDialogA11yId = useId();
-
   const updateDialogContent = useSetAtom(DialogContentAtom);
 
-  const handleRequestToTermDialogOpen = () => {
-    updateDialogContent(
-      <_Content aria-labelledby={termDialogA11yId} role="dialog">
-        <Text as="h2" color={Color.MONO_100} id={termDialogA11yId} typography={Typography.NORMAL16}>
-          利用規約
-        </Text>
-        <Spacer height={Space * 1} />
-        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {TERM}
-        </Text>
-      </_Content>,
-    );
+  const dialogA11yIds = {
+    TERM: useId(),
+    CONTACT: useId(),
+    QUESTION: useId(),
+    COMPANY: useId(),
+    OVERVIEW: useId(),
   };
 
-  const handleRequestToContactDialogOpen = () => {
-    updateDialogContent(
-      <_Content aria-labelledby={contactDialogA11yId} role="dialog">
-        <Text as="h2" color={Color.MONO_100} id={contactDialogA11yId} typography={Typography.NORMAL16}>
-          お問い合わせ
-        </Text>
-        <Spacer height={Space * 1} />
-        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {CONTACT}
-        </Text>
-      </_Content>,
-    );
+  const dialogTitles = {
+    TERM: "利用規約",
+    CONTACT: "お問い合わせ",
+    QUESTION: "Q&A",
+    COMPANY: "運営会社",
+    OVERVIEW: "Cyber TOONとは",
   };
 
-  const handleRequestToQuestionDialogOpen = () => {
-    updateDialogContent(
-      <_Content aria-labelledby={questionDialogA11yId} role="dialog">
-        <Text as="h2" color={Color.MONO_100} id={questionDialogA11yId} typography={Typography.NORMAL16}>
-          Q&A
-        </Text>
-        <Spacer height={Space * 1} />
-        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {QUESTION}
-        </Text>
-      </_Content>,
-    );
-  };
+  const handleRequestToDialogOpen = async (type: keyof typeof dialogA11yIds) => {
+    try {
+        let content;
+        switch (type) {
+            case 'TERM':
+                const { TERM } = await import('../constants/Term');
+                content = TERM;
+                break;
+            case 'CONTACT':
+                const { CONTACT } = await import('../constants/Contact');
+                content = CONTACT;
+                break;
+            case 'QUESTION':
+                const { QUESTION } = await import('../constants/Question');
+                content = QUESTION;
+                break;
+            case 'COMPANY':
+                const { COMPANY } = await import('../constants/Company');
+                content = COMPANY;
+                break;
+            case 'OVERVIEW':
+                const { OVERVIEW } = await import('../constants/Overview');
+                content = OVERVIEW;
+                break;
+            default:
+                throw new Error('Invalid type for dialog content.');
+        }
 
-  const handleRequestToCompanyDialogOpen = () => {
-    updateDialogContent(
-      <_Content aria-labelledby={companyDialogA11yId} role="dialog">
-        <Text as="h2" color={Color.MONO_100} id={companyDialogA11yId} typography={Typography.NORMAL16}>
-          運営会社
-        </Text>
-        <Spacer height={Space * 1} />
-        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {COMPANY}
-        </Text>
-      </_Content>,
-    );
-  };
-
-  const handleRequestToOverviewDialogOpen = () => {
-    updateDialogContent(
-      <_Content aria-labelledby={overviewDialogA11yId} role="dialog">
-        <Text as="h2" color={Color.MONO_100} id={overviewDialogA11yId} typography={Typography.NORMAL16}>
-          Cyber TOONとは
-        </Text>
-        <Spacer height={Space * 1} />
-        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-          {OVERVIEW}
-        </Text>
-      </_Content>,
-    );
-  };
+        updateDialogContent(
+            <_Content aria-labelledby={dialogA11yIds[type]} role="dialog">
+                <Text as="h2" color={Color.MONO_100} id={dialogA11yIds[type]} typography={Typography.NORMAL16}>
+                    {dialogTitles[type]}
+                </Text>
+                <Spacer height={Space * 1} />
+                <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
+                    {content}
+                </Text>
+            </_Content>,
+        );
+    } catch (error) {
+        console.error('Error loading dialog content:', error);
+        // ここでエラーハンドリングを行う
+    }
+};
 
   return (
     <Box as="footer" backgroundColor={Color.Background} p={Space * 1}>
       <Flex align="flex-start" direction="column" gap={Space * 1} justify="flex-start">
         <img alt="Cyber TOON" src="/assets/cyber-toon.svg" />
         <Flex align="start" direction="row" gap={Space * 1.5} justify="center">
-          <_Button disabled={!isClient} onClick={handleRequestToTermDialogOpen}>
-            利用規約
-          </_Button>
-          <_Button disabled={!isClient} onClick={handleRequestToContactDialogOpen}>
-            お問い合わせ
-          </_Button>
-          <_Button disabled={!isClient} onClick={handleRequestToQuestionDialogOpen}>
-            Q&A
-          </_Button>
-          <_Button disabled={!isClient} onClick={handleRequestToCompanyDialogOpen}>
-            運営会社
-          </_Button>
-          <_Button disabled={!isClient} onClick={handleRequestToOverviewDialogOpen}>
-            Cyber TOONとは
-          </_Button>
+          {Object.keys(dialogTitles).map((type) => (
+            <_Button key={type} disabled={!isClient} onClick={() => handleRequestToDialogOpen(type as keyof typeof dialogA11yIds)}>
+              {dialogTitles[type as keyof typeof dialogA11yIds]}
+            </_Button>
+          ))}
         </Flex>
       </Flex>
     </Box>
