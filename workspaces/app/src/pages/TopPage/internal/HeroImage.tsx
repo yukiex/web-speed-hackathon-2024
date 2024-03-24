@@ -14,7 +14,7 @@ const _Image = styled.img`
   width: 100%;
 `;
 
-export const HeroImage: React.FC = () => {
+const HeroImage: React.FC = () => {
   const imageRef = useRef<HTMLImageElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
 
@@ -119,3 +119,5 @@ void main() {
     </_Wrapper>
   );
 };
+
+export default HeroImage;
